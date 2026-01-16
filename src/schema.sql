@@ -1,0 +1,12 @@
+CREATE TABLE client (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL
+);
+
+CREATE TABLE vehicle (
+    id SERIAL PRIMARY KEY,
+    model VARCHAR(100) NOT NULL,
+    price DOUBLE PRECISION NOT NULL,
+    available BOOLEAN NOT NULL
+);
