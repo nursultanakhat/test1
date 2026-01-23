@@ -6,8 +6,8 @@ public class Menu {
     private final Scanner sc = new Scanner(System.in);
     private final Connection conn;
 
-    private final VehicleDAO vehicleDAO = new VehicleDAO();
-    private final ClientDAO clientDAO = new ClientDAO();
+    private final VehicleDB vehicleDB = new VehicleDB();
+    private final ClientDB clientDB = new ClientDB();
 
     public Menu(Connection conn) {
         this.conn = conn;
@@ -84,7 +84,7 @@ public class Menu {
 
     // --- Vehicle actions ---
     private void showVehicles() throws Exception {
-        List<String> list = vehicleDAO.readAll(conn);
+        List<String> list = vehicleDB.readAll(conn);
         if (list.isEmpty()) System.out.println("(no vehicles)");
         for (String s : list) System.out.println(s);
     }
@@ -96,7 +96,7 @@ public class Menu {
         System.out.print("Price per day: ");
         double price = readDouble();
 
-        vehicleDAO.create(conn, model, price, true);
+        vehicleDB.create(conn, model, price, true);
         System.out.println("Vehicle added.");
     }
 
@@ -107,7 +107,7 @@ public class Menu {
         System.out.print("New price: ");
         double newPrice = readDouble();
 
-        vehicleDAO.updatePrice(conn, id, newPrice);
+        vehicleDB.updatePrice(conn, id, newPrice);
         System.out.println("Vehicle price updated.");
     }
 
@@ -119,7 +119,7 @@ public class Menu {
         int st = readInt();
 
         boolean available = (st == 1);
-        vehicleDAO.updateAvailability(conn, id, available);
+        vehicleDB.updateAvailability(conn, id, available);
         System.out.println("Vehicle status updated.");
     }
 
@@ -127,13 +127,13 @@ public class Menu {
         System.out.print("Vehicle ID: ");
         int id = readInt();
 
-        vehicleDAO.delete(conn, id);
+        vehicleDB.delete(conn, id);
         System.out.println("Vehicle deleted.");
     }
 
     // --- Client actions ---
     private void showClients() throws Exception {
-        List<String> list = clientDAO.readAll(conn);
+        List<String> list = clientDB.readAll(conn);
         if (list.isEmpty()) System.out.println("(no clients)");
         for (String s : list) System.out.println(s);
     }
@@ -145,7 +145,7 @@ public class Menu {
         System.out.print("Age: ");
         int age = readInt();
 
-        clientDAO.create(conn, name, age);
+        clientDB.create(conn, name, age);
         System.out.println("Client added.");
     }
 
@@ -156,7 +156,7 @@ public class Menu {
         System.out.print("New age: ");
         int age = readInt();
 
-        clientDAO.updateAge(conn, id, age);
+        clientDB.updateAge(conn, id, age);
         System.out.println("Client age updated.");
     }
 
@@ -164,7 +164,7 @@ public class Menu {
         System.out.print("Client ID: ");
         int id = readInt();
 
-        clientDAO.delete(conn, id);
+        clientDB.delete(conn, id);
         System.out.println("Client deleted.");
     }
 }

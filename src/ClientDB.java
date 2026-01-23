@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDAO {
+public class ClientDB {
 
     public void create(Connection conn, String name, int age) throws SQLException {
         String sql = "INSERT INTO client (name, age) VALUES (?, ?)";

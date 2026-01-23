@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VehicleDAO {
+public class VehicleDB {
 
     public void create(Connection conn, String model, double price, boolean available) throws SQLException {
         String sql = "INSERT INTO vehicle (model, price, available) VALUES (?, ?, ?)";
