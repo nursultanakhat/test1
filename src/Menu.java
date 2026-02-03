@@ -3,14 +3,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
+
     private final Scanner sc = new Scanner(System.in);
+
     private final Connection conn;
+    private final VehicleRepository vehicleRepo;
+    private final ClientRepository clientRepo;
 
-    private final VehicleDB vehicleDB = new VehicleDB();
-    private final ClientDB clientDB = new ClientDB();
-
-    public Menu(Connection conn) {
+    public Menu(Connection conn, VehicleRepository vehicleRepo, ClientRepository clientRepo) {
         this.conn = conn;
+        this.vehicleRepo = vehicleRepo;
+        this.clientRepo = clientRepo;
     }
 
     public void start() {
@@ -20,14 +23,12 @@ public class Menu {
 
             try {
                 switch (choice) {
-                    // Vehicle CRUD
                     case 1 -> showVehicles();
                     case 2 -> addVehicle();
                     case 3 -> updateVehiclePrice();
                     case 4 -> updateVehicleStatus();
                     case 5 -> deleteVehicle();
 
-                    // Client CRUD
                     case 6 -> showClients();
                     case 7 -> addClient();
                     case 8 -> updateClientAge();
@@ -46,8 +47,7 @@ public class Menu {
     }
 
     private void showMenu() {
-        System.out.println("\n=== VEHICLE RENTAL ===");
-        System.out.println("1) Show vehicles");
+        System.out.println("\n1) Show vehicles");
         System.out.println("2) Add vehicle");
         System.out.println("3) Update vehicle price");
         System.out.println("4) Change vehicle status");
@@ -82,11 +82,11 @@ public class Menu {
         return x;
     }
 
-    // --- Vehicle actions ---
+    // -------- VEHICLES --------
     private void showVehicles() throws Exception {
-        List<String> list = vehicleDB.readAll(conn);
+        List<String> list = vehicleRepo.readAll(conn);
         if (list.isEmpty()) System.out.println("(no vehicles)");
-        for (String s : list) System.out.println(s);
+        for (String v : list) System.out.println(v);
     }
 
     private void addVehicle() throws Exception {
@@ -96,7 +96,7 @@ public class Menu {
         System.out.print("Price per day: ");
         double price = readDouble();
 
-        vehicleDB.create(conn, model, price, true);
+        vehicleRepo.create(conn, model, price, true);
         System.out.println("Vehicle added.");
     }
 
@@ -107,7 +107,7 @@ public class Menu {
         System.out.print("New price: ");
         double newPrice = readDouble();
 
-        vehicleDB.updatePrice(conn, id, newPrice);
+        vehicleRepo.updatePrice(conn, id, newPrice);
         System.out.println("Vehicle price updated.");
     }
 
@@ -119,7 +119,7 @@ public class Menu {
         int st = readInt();
 
         boolean available = (st == 1);
-        vehicleDB.updateAvailability(conn, id, available);
+        vehicleRepo.updateAvailability(conn, id, available);
         System.out.println("Vehicle status updated.");
     }
 
@@ -127,15 +127,15 @@ public class Menu {
         System.out.print("Vehicle ID: ");
         int id = readInt();
 
-        vehicleDB.delete(conn, id);
+        vehicleRepo.delete(conn, id);
         System.out.println("Vehicle deleted.");
     }
 
-    // --- Client actions ---
+    // -------- CLIENTS --------
     private void showClients() throws Exception {
-        List<String> list = clientDB.readAll(conn);
+        List<String> list = clientRepo.readAll(conn);
         if (list.isEmpty()) System.out.println("(no clients)");
-        for (String s : list) System.out.println(s);
+        for (String c : list) System.out.println(c);
     }
 
     private void addClient() throws Exception {
@@ -145,7 +145,7 @@ public class Menu {
         System.out.print("Age: ");
         int age = readInt();
 
-        clientDB.create(conn, name, age);
+        clientRepo.create(conn, name, age);
         System.out.println("Client added.");
     }
 
@@ -156,7 +156,7 @@ public class Menu {
         System.out.print("New age: ");
         int age = readInt();
 
-        clientDB.updateAge(conn, id, age);
+        clientRepo.updateAge(conn, id, age);
         System.out.println("Client age updated.");
     }
 
@@ -164,8 +164,7 @@ public class Menu {
         System.out.print("Client ID: ");
         int id = readInt();
 
-        clientDB.delete(conn, id);
+        clientRepo.delete(conn, id);
         System.out.println("Client deleted.");
     }
 }
-

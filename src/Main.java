@@ -10,8 +10,13 @@ public class Main {
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             System.out.println("Connected to Database!");
-            Menu menu = new Menu(conn);
+
+            VehicleRepository vehicleRepo = new VehicleDB();
+            ClientRepository clientRepo = new ClientDB();
+
+            Menu menu = new Menu(conn, vehicleRepo, clientRepo);
             menu.start();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

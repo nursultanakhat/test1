@@ -1,62 +1,49 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.sql.Connection;
 
 public class RentalService {
 
-    private List<Vehicle> vehicles = new ArrayList<>();
+    private final VehicleRepository vehicleRepo;
 
-    public void addVehicle(Vehicle vehicle) {
-        vehicles.add(vehicle);
-    }
-    public List<Vehicle> getAllVehicles() {
-        return new ArrayList<>(vehicles);
-    }
-    public List<Vehicle> filterAvailable() {
-        List<Vehicle> result = new ArrayList<>();
-        for (Vehicle v : vehicles) {
-            if (v.isAvailable()) {
-                result.add(v);
-            }
-        }
-        return result;
-    }
-    public List<Vehicle> searchByModel(String text) {
-        List<Vehicle> result = new ArrayList<>();
-        String t = text.toLowerCase();
-
-        for (Vehicle v : vehicles) {
-            if (v.getModel().toLowerCase().contains(t)) {
-                result.add(v);
-            }
-        }
-        return result;
-    }
-    public List<Vehicle> sortByPrice() {
-        List<Vehicle> copy = new ArrayList<>(vehicles);
-        copy.sort(Comparator.comparingDouble(Vehicle::getPrice));
-        return copy;
-    }
-    public List<Vehicle> sortByModel() {
-        List<Vehicle> copy = new ArrayList<>(vehicles);
-        copy.sort(Comparator.comparing(Vehicle::getModel));
-        return copy;
-    }
-    public double TotalPrice(Vehicle vehicle, int days) {
-        return vehicle.getPrice() * days;
+    public RentalService(VehicleRepository vehicleRepo) {
+        this.vehicleRepo = vehicleRepo;
     }
 
-    public void rentVehicle(Vehicle vehicle, Client client, int days) {
-        if (vehicle.isAvailable()) {
-            vehicle.setAvailable(false);
-            double total = TotalPrice(vehicle, days);
-            System.out.println(client.getName() + " rented " +
-                    vehicle.getModel() + " for " + days +
-                    " days. Total price: " + total);
-        } else {
-            System.out.println("Vehicle is not available.");
+    public void rentVehicle(Connection conn, int vehicleId, int days) throws Exception {
+        if (days <= 0) {
+            throw new IllegalArgumentException("Days must be greater than 0");
         }
+
+        Boolean available = vehicleRepo.isAvailableById(conn, vehicleId);
+
+        if (available == null) {
+            System.out.println("Vehicle with this ID not found.");
+            return;
+        }
+
+        if (!available) {
+            System.out.println("Vehicle is already rented.");
+            return;
+        }
+
+        vehicleRepo.updateAvailability(conn, vehicleId, false);
+        System.out.println("Vehicle rented successfully.");
+    }
+
+    public void returnVehicle(Connection conn, int vehicleId) throws Exception {
+        Boolean available = vehicleRepo.isAvailableById(conn, vehicleId);
+
+        if (available == null) {
+            System.out.println("Vehicle with this ID not found.");
+            return;
+        }
+
+        if (available) {
+            System.out.println("Vehicle is already available.");
+            return;
+        }
+
+        vehicleRepo.updateAvailability(conn, vehicleId, true);
+        System.out.println("Vehicle returned successfully.");
     }
 }
-
 
